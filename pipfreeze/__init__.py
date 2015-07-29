@@ -1,1 +1,1 @@
-from .pipfreeze import PipFreeze
+from .pipfreeze import PipFreeze  # flake8: noqa
