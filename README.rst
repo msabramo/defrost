@@ -10,7 +10,7 @@ matches a given version range.
 Install
 -------
 
-.. code-block:: python
+.. code-block::
 
     pip insall pipfreeze
 
