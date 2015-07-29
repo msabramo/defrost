@@ -12,12 +12,15 @@ class PipFreeze(object):
         for req in reqs:
             self._requirements[req.key] = req
 
-    def has_package(self, requirement):
-        return requirement.key in self._requirements
-
     def satisfies_requirement(self, requirement):
-        if not self.has_package(requirement):
-            return False
+        """
+        Return ``True`` if the package requirement is satisfied,
+        ``False`` otherwise.
+
+        If the package is not in the pip freeze output, ``None`` is returned.
+        """
+        if requirement.key not in self._requirements:
+            return
 
         freeze = self._requirements[requirement.key]
 
