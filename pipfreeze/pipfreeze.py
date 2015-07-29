@@ -12,6 +12,14 @@ class PipFreeze(object):
         for req in reqs:
             self._requirements[req.key] = req
 
+    def __nonzero__(self):
+        # Python 2.x
+        return self.__bool__()
+
+    def __bool__(self):
+        # Python 3.x
+        return bool(self._requirements)
+
     def satisfies_requirement(self, requirement):
         """
         Return ``True`` if the package requirement is satisfied,
