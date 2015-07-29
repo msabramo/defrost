@@ -3,21 +3,21 @@ pipfreeze
 
 A tool to audit pip freeze outputs and test version requirements.
 
-This tool can be used to audit the pip freeze output a virtualenv and check
+This tool can be used to audit the pip freeze output of a virtualenv and check
 whether a specific version of a package is installed, or a version that
-matches a range.
+matches a given version range.
 
 Install
 -------
 
-::
+.. code-block:: python
 
     pip insall pipfreeze
 
 Usage
 -----
 
-::
+.. code-block:: python
 
     from pipfreeze import PipFreeze
     from pkg_resource import Requirement
