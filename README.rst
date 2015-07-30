@@ -12,7 +12,7 @@ Install
 
 .. code-block::
 
-    pip insall pipfreeze
+    pip install pipfreeze
 
 Usage
 -----
