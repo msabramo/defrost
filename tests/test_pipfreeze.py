@@ -29,3 +29,14 @@ def test_pip_freeze__bool(freeze, expected):
     from pipfreeze import PipFreeze
     pip_freeze = PipFreeze(freeze)
     assert bool(pip_freeze) is expected
+
+
+@pytest.mark.parametrize("freeze, expected", [
+    ("", []),
+    ("foobar==1.2.3", ["foobar==1.2.3"]),
+    ("foo==1.2.3\nbar==2.0", ["foo==1.2.3", "bar==2.0"]),
+])
+def test_pip_freeze__iter(freeze, expected):
+    from pipfreeze import PipFreeze
+    pip_freeze = PipFreeze(freeze)
+    assert list(pip_freeze) == [Requirement.parse(req) for req in expected]
