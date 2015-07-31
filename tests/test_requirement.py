@@ -12,3 +12,34 @@ def test_requirement(req, req_name, req_specs, req_raw, req_id):
     assert req.name == req_name
     assert req.specifiers == req_specs
     assert req.raw == req_raw
+
+
+@pytest.mark.parametrize("req1, req2, expected", [
+    ('foobar==1.2', 'foobar==1.2', True),
+    ('foobar>=1.2', 'foobar==1.2', False),
+    ('foobar==1.2', 'foobar', False),
+])
+def test_requirement__equals(req1, req2, expected):
+    from pipfreeze import Requirement
+    req1 = Requirement(req1)
+    req2 = Requirement(req2)
+    assert (req1 == req2) is expected
+
+
+@pytest.mark.parametrize("package, req, expected", [
+    ('foobar==1.2', 'foobar', True),
+    ('foobar==1.2', 'foobar==1.2', True),
+    ('foobar==1.2', 'foobar>=1.2', True),
+    ('foobar==1.2', 'foobar<=1.2', True),
+    ('foobar==1.2', 'foobar>=1.0,<2.0', True),
+    ('foobar==1.2', 'foobar>2.0', False),
+    ('foobar==1.2', 'foobar<1.0', False),
+    ('foobar==1.2', 'foobar<1.2', False),
+    ('foobar==1.2', 'foobar>1.2', False),
+    ('foobar==1.2', 'foo', False),
+])
+def test_requirement__contains_package(package, req, expected):
+    from pipfreeze import Requirement, Package
+    package = Package(package)
+    req = Requirement(req)
+    assert (package in req) is expected

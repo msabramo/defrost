@@ -1,8 +1,7 @@
 import pytest
-from pkg_resources import Requirement
 
 
-@pytest.mark.parametrize("freeze, test_package, expected", [
+@pytest.mark.parametrize("freeze_output, test_package, expected", [
     ("", 'foobar', None),
     ("foobar==1.2.3", 'foobar', True),
     ("foobar==1.2.3", 'foobar==1.2.3', True),
@@ -13,10 +12,10 @@ from pkg_resources import Requirement
     ("foo==1.2.3\nbar==2.0", 'foobar', None),
     ("foo==1.2.3\nbar==2.0", 'foo', True),
 ])
-def test_pip_freeze__satisfies_requirement(freeze, test_package, expected):
-    from pipfreeze import PipFreeze
-    test_package = Requirement.parse(test_package)
-    pip_freeze = PipFreeze(freeze)
+def test_pip_freeze__satisfies_requirement(freeze_output, test_package, expected):
+    from pipfreeze import PipFreeze, Requirement
+    test_package = Requirement(test_package)
+    pip_freeze = PipFreeze(freeze_output)
     assert pip_freeze.satisfies_requirement(test_package) is expected
 
 
@@ -37,6 +36,6 @@ def test_pip_freeze__bool(freeze, expected):
     ("foo==1.2.3\nbar==2.0", ["foo==1.2.3", "bar==2.0"]),
 ])
 def test_pip_freeze__iter(freeze, expected):
-    from pipfreeze import PipFreeze
+    from pipfreeze import PipFreeze, Requirement
     pip_freeze = PipFreeze(freeze)
-    assert list(pip_freeze) == [Requirement.parse(req) for req in expected]
+    assert list(pip_freeze) == [Requirement(req) for req in expected]
