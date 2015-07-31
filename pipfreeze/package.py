@@ -54,7 +54,8 @@ class Package(object):
         self._req = Requirement(pinned_requirement)
 
         # Ensure we're dealing with an exact package version
-        if len(self._req.specifiers) != 1 or self._req.specifiers[0][0] != '==':
+        if len(self._req.specifiers) != 1 or \
+                self._req.specifiers[0][0] != '==':
             raise ValueError(
                 '{} does not represent an exact package version; '
                 'the format should be foo==1.0'.format(pinned_requirement)
