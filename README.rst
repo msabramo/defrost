@@ -84,19 +84,30 @@ PipFreeze takes a pip freeze output as input.
     """
 
     >>> pip_freeze = PipFreeze(pip_freeze_output)
+    >>> len(pip_freeze)
+    2
 
-    # Check if foo v2 or greater is installed
-    req = Requirement('foo>=2.0')
-    assert pip_freeze.satisfies_requirement(req) is False
+    >>> list(pip_freeze)
+    [Package(foo==1.2.3), Package(bar==2.0)]
 
-    # Check if foo 1.2.3 is installed
-    req = Requirement('foo==1.2.3')
-    assert pip_freeze.satisfies_requirement(req) is True
+    >>> Package('foo==1.2.3') in pip_freeze
+    True
 
-    # Check if any version of foo 1.x is installed
-    req = Requirement('foo>=1.0.0,<2.0.0')
-    assert pip_freeze.satisfies_requirement(req) is True
+    >>> Package('zoo==0.0') in pip_freeze
+    False
 
-    # Check if any version of zoo is installed
-    req = Requirement('zoo')
-    assert pip_freeze.satisfies_requirement(req) is None
+    >>> # Check if foo v2 or greater is installed
+    >>> req = Requirement('foo>=2.0')
+    >>> assert pip_freeze.satisfies_requirement(req) is False
+
+    >>> # Check if foo 1.2.3 is installed
+    >>> req = Requirement('foo==1.2.3')
+    >>> assert pip_freeze.satisfies_requirement(req) is True
+
+    >>> # Check if any version of foo 1.x is installed
+    >>> req = Requirement('foo>=1.0.0,<2.0.0')
+    >>> assert pip_freeze.satisfies_requirement(req) is True
+
+    >>> # Check if any version of zoo is installed
+    >>> req = Requirement('zoo')
+    >>> assert pip_freeze.satisfies_requirement(req) is None

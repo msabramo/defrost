@@ -1,4 +1,4 @@
-from .requirement import Package
+from .package import Package
 from collections import OrderedDict
 
 
@@ -18,9 +18,15 @@ class PipFreeze(object):
         for package in packages:
             self._packages[package.id] = package
 
+    def __contains__(self, package):
+        return self._packages.get(package.id) == package
+
     def __iter__(self):
         for package in self._packages.values():
             yield package
+
+    def __len__(self):
+        return len(self._packages)
 
     def __nonzero__(self):
         # Python 2.x

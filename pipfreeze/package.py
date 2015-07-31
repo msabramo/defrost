@@ -19,14 +19,17 @@ class Requirement(object):
         ``requirement`` is a string that represents a package requirement.
 
         """
-        self.raw = requirement
         self._req = pkg_resources.Requirement.parse(requirement)
 
         self.id = self._req.key
         self.name = self._req.project_name
+        self.raw = requirement
         self.specifiers = self._req.specs
 
     def __eq__(self, other):
+        if not isinstance(other, self.__class__):
+            return False
+
         return self._req == other._req
 
     def __contains__(self, package):
@@ -35,14 +38,49 @@ class Requirement(object):
         return package.version in self._req
 
 
-class Package(Requirement):
+class Package(object):
+    """
+    An exact package version.
+
+    A Package object represents exactly one version of a package.
+
+    For example::
+
+        foo==1.0
+        bar==2.3
+
+    """
     def __init__(self, pinned_requirement):
-        super(Package, self).__init__(pinned_requirement)
+        self._req = Requirement(pinned_requirement)
 
         # Ensure we're dealing with an exact package version
-        if len(self.specifiers) != 1 or self.specifiers[0][0] != '==':
+        if len(self._req.specifiers) != 1 or self._req.specifiers[0][0] != '==':
             raise ValueError(
                 '{} does not represent an exact package version; '
                 'the format should be foo==1.0'.format(pinned_requirement)
             )
-        self.version = self.specifiers[0][1]
+
+    def __eq__(self, other):
+        if not isinstance(other, self.__class__):
+            return False
+
+        return (self.name, self.version) == (other.name, other.version)
+
+    def __repr__(self):
+        return "Package({})".format(self.raw)
+
+    @property
+    def raw(self):
+        return self._req.raw
+
+    @property
+    def id(self):
+        return self._req.id
+
+    @property
+    def name(self):
+        return self._req.name
+
+    @property
+    def version(self):
+        return self._req.specifiers[0][1]
