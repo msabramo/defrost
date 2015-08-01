@@ -35,7 +35,7 @@ Packages take an exact package version as input.
     >>> package.version
     '1.2'
 
-If you don't pass a pinned requirement, it will raise a ``ValueError``.
+If you don't pass an exact version in your requirement it will raise a ``ValueError``.
 
 .. code-block:: python
 
@@ -55,9 +55,11 @@ A requirement represents a range of package versions.
 
     >>> from pipfreeze import Requirement
 
-    >>> req = Requirement('foo>=1.0')
+    >>> req = Requirement('foo>=1.0,<2.0')
     >>> req.name
     'foo'
+    >>> req.specifier
+    [('>=', '1.0'), ('<', '2.0')]
 
 Requirements play well with packages. You can check if a package satifies a requirement properly.
 
@@ -66,13 +68,15 @@ Requirements play well with packages. You can check if a package satifies a requ
     >>> req = Requirement('foo>=1.0')
     >>> Package('foo==1.0') in req
     True
+    >>> Package('foo==2.0') in req
+    True
     >>> Package('foo==0.1') in req
     False
 
 PipFreeze
 ~~~~~~~~~
 
-PipFreeze takes a pip freeze output as input.
+PipFreeze takes a pip freeze output as input and builds packages internally.
 
 .. code-block:: python
 
@@ -96,6 +100,10 @@ PipFreeze takes a pip freeze output as input.
     >>> Package('zoo==0.0') in pip_freeze
     False
 
+You can also check if a PipFreeze instance satisfies a given requirement.
+
+.. code-block:: python
+
     >>> # Check if foo v2 or greater is installed
     >>> req = Requirement('foo>=2.0')
     >>> assert pip_freeze.satisfies_requirement(req) is False
@@ -107,6 +115,10 @@ PipFreeze takes a pip freeze output as input.
     >>> # Check if any version of foo 1.x is installed
     >>> req = Requirement('foo>=1.0.0,<2.0.0')
     >>> assert pip_freeze.satisfies_requirement(req) is True
+
+If a requirement is tested but the package is not contained in the PipFreeze, then ``None`` will be returned.
+
+.. code-block:: python
 
     >>> # Check if any version of zoo is installed
     >>> req = Requirement('zoo')
