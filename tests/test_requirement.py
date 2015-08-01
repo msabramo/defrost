@@ -53,3 +53,12 @@ def test_requirement__contains_package(package, req, expected):
     package = Package(package)
     req = Requirement(req)
     assert (package in req) is expected
+
+
+@pytest.mark.parametrize("req, expected", [
+    ('foobar>=1.2', 'Requirement(foobar>=1.2)'),
+])
+def test_requirement__repr(req, expected):
+    from pipfreeze import Requirement
+    req = Requirement(req)
+    assert repr(req) == expected

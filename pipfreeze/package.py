@@ -37,6 +37,9 @@ class Requirement(object):
             return False
         return package.version in self._req
 
+    def __repr__(self):
+        return "Requirement({})".format(self.raw)
+
 
 class Package(object):
     """
