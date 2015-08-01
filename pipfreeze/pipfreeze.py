@@ -1,4 +1,10 @@
-import pkg_resources
+from .package import Package
+from collections import OrderedDict
+
+
+def _parse_pip_freeze(pip_freeze_output):
+    for req in pip_freeze_output.split():
+        yield Package(req)
 
 
 class PipFreeze(object):
@@ -6,18 +12,21 @@ class PipFreeze(object):
         self._load_pip_freeze(pip_freeze_output)
 
     def _load_pip_freeze(self, pip_freeze_output):
-        self._requirements = {}
-        self._order = []
+        self._packages = OrderedDict()
 
-        reqs = pkg_resources.parse_requirements(pip_freeze_output)
-        for req in reqs:
-            self._requirements[req.key] = req
-            self._order.append(req.key)
+        packages = _parse_pip_freeze(pip_freeze_output)
+        for package in packages:
+            self._packages[package.id] = package
+
+    def __contains__(self, package):
+        return self._packages.get(package.id) == package
 
     def __iter__(self):
-        for key in self._order:
-            req = self._requirements[key]
-            yield req
+        for package in self._packages.values():
+            yield package
+
+    def __len__(self):
+        return len(self._packages)
 
     def __nonzero__(self):
         # Python 2.x
@@ -25,19 +34,18 @@ class PipFreeze(object):
 
     def __bool__(self):
         # Python 3.x
-        return bool(self._requirements)
+        return bool(self._packages)
 
     def satisfies_requirement(self, requirement):
         """
-        Return ``True`` if the package requirement is satisfied,
-        ``False`` otherwise.
+        Return ``True`` if ``requirement`` is satisfied, ``False`` otherwise.
 
         If the package is not in the pip freeze output, ``None`` is returned.
         """
-        if requirement.key not in self._requirements:
+        if requirement.id not in self._packages:
             return
 
-        freeze = self._requirements[requirement.key]
+        package = self._packages[requirement.id]
 
         # pip freeze requirements hard pins, so there will be just 1 version
-        return freeze.specs[0][1] in requirement
+        return package in requirement
