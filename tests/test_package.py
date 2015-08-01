@@ -3,6 +3,7 @@ import pytest
 
 @pytest.mark.parametrize("req, req_name, req_specs, req_raw, req_id, req_version", [
     ('foobar==1.2', 'foobar', [('==', '1.2')], 'foobar==1.2', 'foobar', '1.2'),
+    ('foobar===1.2', 'foobar', [('===', '1.2')], 'foobar===1.2', 'foobar', '1.2'),
 ])
 def test_package(req, req_name, req_specs, req_raw, req_id, req_version):
     from pipfreeze import Package
