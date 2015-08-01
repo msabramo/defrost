@@ -62,3 +62,14 @@ def test_requirement__repr(req, expected):
     from pipfreeze import Requirement
     req = Requirement(req)
     assert repr(req) == expected
+
+
+@pytest.mark.parametrize("req1, req2, expected", [
+    ('foobar==1.2', 'foobar==1.2', 1),
+    ('foobar==1.2', 'foobar>=1.2', 2),
+    ('foobar==1.0', 'foobar==1.2', 2),
+])
+def test_requirement__hash(req1, req2, expected):
+    from pipfreeze import Requirement
+    s = {Requirement(req1), Requirement(req2)}
+    assert len(s) == expected

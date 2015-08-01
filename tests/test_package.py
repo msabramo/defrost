@@ -55,3 +55,13 @@ def test_package__repr(req, expected):
     from pipfreeze import Package
     package = Package(req)
     assert repr(package) == expected
+
+
+@pytest.mark.parametrize("req1, req2, expected", [
+    ('foobar==1.2', 'foobar==1.2', 1),
+    ('foobar==1.0', 'foobar==1.2', 2),
+])
+def test_package__hash(req1, req2, expected):
+    from pipfreeze import Package
+    s = {Package(req1), Package(req2)}
+    assert len(s) == expected
