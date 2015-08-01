@@ -106,15 +106,18 @@ You can also check if a PipFreeze instance satisfies a given requirement.
 
     >>> # Check if foo v2 or greater is installed
     >>> req = Requirement('foo>=2.0')
-    >>> assert pip_freeze.satisfies_requirement(req) is False
+    >>> pip_freeze.satisfies_requirement(req)
+    False
 
     >>> # Check if foo 1.2.3 is installed
     >>> req = Requirement('foo==1.2.3')
-    >>> assert pip_freeze.satisfies_requirement(req) is True
+    >>> pip_freeze.satisfies_requirement(req)
+    True
 
     >>> # Check if any version of foo 1.x is installed
     >>> req = Requirement('foo>=1.0.0,<2.0.0')
-    >>> assert pip_freeze.satisfies_requirement(req) is True
+    >>> pip_freeze.satisfies_requirement(req)
+    True
 
 If a requirement is tested but the package is not contained in the PipFreeze, then ``None`` will be returned.
 
@@ -122,4 +125,5 @@ If a requirement is tested but the package is not contained in the PipFreeze, th
 
     >>> # Check if any version of zoo is installed
     >>> req = Requirement('zoo')
-    >>> assert pip_freeze.satisfies_requirement(req) is None
+    >>> pip_freeze.satisfies_requirement(req)
+    None
