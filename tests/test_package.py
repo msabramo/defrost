@@ -86,3 +86,18 @@ def test_package__hash(req1, req2, expected):
     from pipfreeze import Package
     s = {Package(req1), Package(req2)}
     assert len(s) == expected
+
+
+@pytest.mark.parametrize("req1, req2, expected", [
+    ('foobar==1.2', 'foobar==1.2', ['foobar==1.2', 'foobar==1.2']),  # all equal
+    ('foobar==1.0', 'foobar==1.2', ['foobar==1.0', 'foobar==1.2']),  # already sorted
+    ('foobar==1.2', 'foobar==1.0', ['foobar==1.0', 'foobar==1.2']),
+    ('foobar==2.0', 'foobar==1.0', ['foobar==1.0', 'foobar==2.0']),
+    ('foobar==2.0', 'foobar==0.0', ['foobar==0.0', 'foobar==2.0']),
+    ('FOOBAR==2.0', 'foobar==1.0', ['foobar==1.0', 'FOOBAR==2.0']),  # sort case-insensitive, upper-case comes first by default
+])
+def test_package__lt_for_sorting(req1, req2, expected):
+    from pipfreeze import Package
+    package1 = Package(req1)
+    package2 = Package(req2)
+    assert sorted([package1, package2]) == [Package(r) for r in expected]
