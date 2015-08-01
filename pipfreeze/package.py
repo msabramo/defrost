@@ -37,6 +37,9 @@ class Requirement(object):
             return False
         return package.version in self._req
 
+    def __hash__(self):
+        return self._req.__hash__()
+
     def __repr__(self):
         return "Requirement({})".format(self.raw)
 
@@ -72,6 +75,9 @@ class Package(object):
 
     def __repr__(self):
         return "Package({})".format(self.raw)
+
+    def __hash__(self):
+        return self._req.__hash__()
 
     @property
     def raw(self):
