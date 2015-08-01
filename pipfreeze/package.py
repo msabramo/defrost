@@ -79,6 +79,9 @@ class Package(object):
     def __hash__(self):
         return self._req.__hash__()
 
+    def __lt__(self, other):
+        return self.raw.lower() < other.raw.lower()
+
     def __ne__(self, other):
         return not self == other
 
