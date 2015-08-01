@@ -26,19 +26,22 @@ class Requirement(object):
         self.raw = requirement
         self.specifiers = self._req.specs
 
+    def __contains__(self, package):
+        if self.id != package.id:
+            return False
+        return package.version in self._req
+
     def __eq__(self, other):
         if not isinstance(other, self.__class__):
             return False
 
         return self._req == other._req
 
-    def __contains__(self, package):
-        if self.id != package.id:
-            return False
-        return package.version in self._req
-
     def __hash__(self):
         return self._req.__hash__()
+
+    def __ne__(self, other):
+        return not self == other
 
     def __repr__(self):
         return "Requirement({})".format(self.raw)
@@ -73,11 +76,14 @@ class Package(object):
 
         return (self.name, self.version) == (other.name, other.version)
 
-    def __repr__(self):
-        return "Package({})".format(self.raw)
-
     def __hash__(self):
         return self._req.__hash__()
+
+    def __ne__(self, other):
+        return not self == other
+
+    def __repr__(self):
+        return "Package({})".format(self.raw)
 
     @property
     def raw(self):

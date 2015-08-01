@@ -36,6 +36,28 @@ def test_requirement__equals_different_type(req, other, expected):
     assert (req == other) is expected
 
 
+@pytest.mark.parametrize("req1, req2, expected", [
+    ('foobar==1.2', 'foobar==1.2', False),
+    ('foobar>=1.2', 'foobar==1.2', True),
+    ('foobar==1.2', 'foobar', True),
+])
+def test_requirement__not_equals_same_type(req1, req2, expected):
+    from pipfreeze import Requirement
+    req1 = Requirement(req1)
+    req2 = Requirement(req2)
+    assert (req1 != req2) is expected
+
+
+@pytest.mark.parametrize("req, other, expected", [
+    ('foobar==1.2', None, True),
+    ('foobar>=1.2', object(), True),
+])
+def test_requirement__not_equals_different_type(req, other, expected):
+    from pipfreeze import Requirement
+    req = Requirement(req)
+    assert (req != other) is expected
+
+
 @pytest.mark.parametrize("package, req, expected", [
     ('foobar==1.2', 'foobar', True),
     ('foobar==1.2', 'foobar==1.2', True),
