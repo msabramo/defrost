@@ -143,9 +143,9 @@ Package deprecation
 
 You can mark packages as deprecated by declaring a list of requirements in a
 YAML file then loading it and passing the result of it to
-``PipFreeze.load_requirements()``. Packages present in the requirement file
-will be marked as deprecated if they don't satisfy the requirement version.
-You can also provide an optional reason to why a package is deprecated.
+``PipFreeze.load_requirements()``. Packages present in PipFreeze will be marked
+as deprecated if they don't satisfy the loaded requirements. You can also
+provide an optional reason to why a package is deprecated.
 
 Here is sample YAML file:
 
