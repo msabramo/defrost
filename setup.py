@@ -5,7 +5,7 @@ from setuptools import setup, find_packages
 def read(fname):
     return open(os.path.join(os.path.dirname(__file__), fname)).read()
 
-version = '0.0.2'
+version = '0.0.3'
 
 README = read('README.rst')
 CHANGES = read('CHANGES.rst')

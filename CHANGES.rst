@@ -1,5 +1,5 @@
-Unreleased
-==========
+0.0.3
+=====
 
 * implement ``Requirement``
 * implement ``Package``
