@@ -27,8 +27,12 @@ class Requirement(object):
         self.specifiers = self._req.specs
 
     def __contains__(self, package):
+        if not isinstance(package, Package):
+            return False
+
         if self.id != package.id:
             return False
+
         return package.version in self._req
 
     def __eq__(self, other):
@@ -61,6 +65,8 @@ class Package(object):
     """
     def __init__(self, pinned_requirement):
         self._req = Requirement(pinned_requirement)
+        self.deprecated = False
+        self.deprecation_reason = None
 
         # Ensure we're dealing with an exact package version
         if len(self._req.specifiers) != 1 or \
@@ -103,3 +109,7 @@ class Package(object):
     @property
     def version(self):
         return self._req.specifiers[0][1]
+
+    def deprecate(self, reason=None):
+        self.deprecated = True
+        self.deprecation_reason = reason

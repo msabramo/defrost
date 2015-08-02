@@ -12,6 +12,8 @@ def test_package(req, req_name, req_specs, req_raw, req_id, req_version):
     assert package.name == req_name
     assert package.raw == req_raw
     assert package.version == req_version
+    assert package.deprecated is False
+    assert package.deprecation_reason is None
 
 
 @pytest.mark.parametrize("req", [
@@ -101,3 +103,17 @@ def test_package__lt_for_sorting(req1, req2, expected):
     package1 = Package(req1)
     package2 = Package(req2)
     assert sorted([package1, package2]) == [Package(r) for r in expected]
+
+@pytest.mark.parametrize("req, reason", [
+    ('foobar==1.0', 'because'),
+    ('foobar==1.0', None),
+])
+def test_package__deprecate(req, reason):
+    from pipfreeze import Package
+    package = Package('foo==1.0')
+    if reason is None:
+        package.deprecate()
+    else:
+        package.deprecate(reason=reason)
+    package.deprecated is True
+    package.deprecation_reason == reason

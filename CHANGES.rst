@@ -6,6 +6,8 @@ Unreleased
 * implement ``PipFreeze.__contains__()``
 * implement ``PipFreeze.__len__()``
 * drop py26 support
+* remove ``PipFreeze.satisfies_requirement()``
+* implement ``PipFreeze.load_requirements()``
 
 0.0.2
 =====

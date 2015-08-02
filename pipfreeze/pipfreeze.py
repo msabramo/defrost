@@ -1,4 +1,4 @@
-from .package import Package
+from .package import Package, Requirement
 from collections import OrderedDict
 
 
@@ -10,6 +10,7 @@ def _parse_pip_freeze(pip_freeze_output):
 class PipFreeze(object):
     def __init__(self, pip_freeze_output):
         self._load_pip_freeze(pip_freeze_output)
+        self.deprecated = []
 
     def _load_pip_freeze(self, pip_freeze_output):
         self._packages = OrderedDict()
@@ -18,8 +19,15 @@ class PipFreeze(object):
         for package in packages:
             self._packages[package.id] = package
 
-    def __contains__(self, package):
-        return self._packages.get(package.id) == package
+    def __contains__(self, requirement):
+        if isinstance(requirement, Package):
+            requirement = Requirement(requirement.raw)
+
+        elif isinstance(requirement, str):
+            requirement = Requirement(requirement)
+
+        package = self._packages.get(requirement.id)
+        return package in requirement
 
     def __iter__(self):
         for package in self._packages.values():
@@ -30,22 +38,18 @@ class PipFreeze(object):
 
     def __nonzero__(self):
         # Python 2.x
-        return self.__bool__()
+        return self.__bool__()  # pragma: no cover
 
     def __bool__(self):
         # Python 3.x
         return bool(self._packages)
 
-    def satisfies_requirement(self, requirement):
-        """
-        Return ``True`` if ``requirement`` is satisfied, ``False`` otherwise.
-
-        If the package is not in the pip freeze output, ``None`` is returned.
-        """
-        if requirement.id not in self._packages:
-            return
-
-        package = self._packages[requirement.id]
-
-        # pip freeze requirements hard pins, so there will be just 1 version
-        return package in requirement
+    def load_requirements(self, requirements):
+        for req in requirements['requirements']:
+            requirement = Requirement(req['requirement'])
+            package = self._packages.get(requirement.id)
+            if package is None:
+                continue
+            if package not in requirement:
+                package.deprecate(reason=req['reason'])
+                self.deprecated.append(package)

@@ -1,22 +1,6 @@
 import pytest
 
-
-@pytest.mark.parametrize("freeze_output, test_package, expected", [
-    ("", 'foobar', None),
-    ("foobar==1.2.3", 'foobar', True),
-    ("foobar==1.2.3", 'foobar==1.2.3', True),
-    ("foobar==1.2.3", 'foobar==1.2.4', False),
-    ("foobar==1.2.3", 'foobar>=1.0.0', True),
-    ("foobar==1.2.3", 'foobar<2.0.0', True),
-    ("foobar==1.2.3", 'foobar>=1.0.0,<2.0.0', True),
-    ("foo==1.2.3\nbar==2.0", 'foobar', None),
-    ("foo==1.2.3\nbar==2.0", 'foo', True),
-])
-def test_pip_freeze__satisfies_requirement(freeze_output, test_package, expected):
-    from pipfreeze import PipFreeze, Requirement
-    test_package = Requirement(test_package)
-    pip_freeze = PipFreeze(freeze_output)
-    assert pip_freeze.satisfies_requirement(test_package) is expected
+from pipfreeze import Package, Requirement
 
 
 @pytest.mark.parametrize("freeze, expected", [
@@ -53,15 +37,48 @@ def test_pip_freeze__len(freeze, expected):
 
 
 @pytest.mark.parametrize("freeze, package, expected", [
+    ('foo==1.2', 'foo', True),
+    ('foo==1.2', 'foo==1.2', True),
+    ('foo==1.2', 'foo>=1.0', True),
+    ('foo==1.2', 'foo<2.0', True),
+    ("foobar==1.2", 'foobar>=1.0,<2.0', True),
+    ('foo==1.2', Requirement('foo'), True),
+    ('foo==1.2', Requirement('foo==1.2'), True),
+    ('foo==1.2', Requirement('foo>=1.0'), True),
+    ('foo==1.2', Package('foo==1.2'), True),
+    ('foo==1.2\nbar==1.0', 'bar', True),
+    ("foo==1.2\nbar==2.0", 'foobar', False),
+    ('foo==1.2', 'bar', False),
+    ('foo==1.2', 'foo==1.3', False),
+    ('foo==1.2', Requirement('bar'), False),
+    ('foo==1.2', Requirement('foo==1.3'), False),
+    ('foo==1.2', Requirement('foo>=2.0'), False),
+    ('foo==1.2', Requirement('bar==1.2'), False),
+    ('foo==1.2', Package('bar==1.2'), False),
     ("", "foo==1.2", False),
-    ("foobar==1.2.3", "foo==1.2.3", False),
-    ("foobar==1.2.3", "foobar==1.2.3", True),
-    ("foo==1.2.3\nbar==2.0", "foo==1.2.3", True),
-    ("foo==1.2.3\nbar==2.0", "bar==2.0", True),
-    ("foo==1.2.3\nbar==2.0", "zoo==5.0", False),
 ])
 def test_pip_freeze__contains(freeze, package, expected):
-    from pipfreeze import PipFreeze, Package
+    from pipfreeze import PipFreeze
     pip_freeze = PipFreeze(freeze)
-    package = Package(package)
     assert (package in pip_freeze) is expected
+
+
+@pytest.mark.parametrize("freeze, reqs, expected_deprecated", [
+    ("foo==1.2", {'requirements': [{'requirement': 'foo', 'reason': 'hello'}]}, []),
+    ("foo==1.2", {'requirements': [{'requirement': 'foo<1.0', 'reason': 'upgrade'}]}, [('foo==1.2', 'upgrade')]),
+    ("foo==1.2", {'requirements': [{'requirement': 'foo>=1.0', 'reason': 'upgrade'}]}, []),
+    ("foo==1.2\nbar==2.0", {'requirements': [
+        {'requirement': 'foo>=1.0', 'reason': 'upgrade'},
+        {'requirement': 'bar<2.0', 'reason': 'downgrade'}]}, [('bar==2.0', 'downgrade')]),
+    ("foo==1.2", {'requirements': []}, []),
+    ("foo==1.2", {'requirements': [{'requirement': 'bar>=1.0', 'reason': 'upgrade'}]}, []),
+])
+def test_pip_freeze__load_requirements(freeze, reqs, expected_deprecated):
+    from pipfreeze import PipFreeze
+    pip_freeze = PipFreeze(freeze)
+    pip_freeze.load_requirements(reqs)
+    assert len(pip_freeze.deprecated) == len(expected_deprecated)
+    for package, (pin, reason) in zip(pip_freeze.deprecated, expected_deprecated):
+        assert package.deprecated is True
+        assert package.raw == pin
+        assert package.deprecation_reason == reason
