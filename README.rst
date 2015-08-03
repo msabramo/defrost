@@ -81,10 +81,10 @@ Here is sample YAML file:
 
    ---
    requirements:
-   - requirement: foobar<1.0
+   - requirement: foobar>=1.0
      reason: foobar pre-1.0 is no longer supported, please upgrade to 1.x
 
-   - requirement: ordereddict
+   - requirement: ordereddict<0.0
      reason: ordereddict is part of Python 2.7 and above. If you are still running Python 2.6, please upgrade!
 
 And this is how you would go about loading requirements and finding deprecated
@@ -99,16 +99,17 @@ packages:
     """)
 
     >>> import yaml
-    >>> reqs = yaml.load('my-reqs.yaml')
+    >>> reqs = yaml.load(open('my-reqs.yaml'))
     >>> pip_freeze.load_requirements(reqs)
     >>> pip_freeze.deprecated
     [Package(foobar==0.8), Package(ordereddict==1.1)]
-    >>> for package in pip_freeze:
-    ...     print("Package %s, deprecated: %s, reason: %s" % (package.name, package.deprecated, package.deprecation_reason))
+    >>> for package in pip_freeze.deprecated:
+    ...     print("%s, deprecated=%s, deprecator=%s, reason=%s" % (
+                package, package.deprecated, package.deprecator, package.deprecation_reason
+            ))
     ...
-    Package foobar, deprecated: True, reason: foobar pre-1.0 is no longer supported, please upgrade to 1.x
-    Package bar, deprecated: False, reason: None
-    Package ordereddict, deprecated: True, reason: ordereddict is part of Python 2.7 and above. If you are still running Python 2.6, please upgrade!
+    Package(foobar==0.8), deprecated=True, deprecatorRequirement(foobar>=1.0), reason=foobar pre-1.0 is no longer supported, please upgrade to 1.x
+    Package(ordereddict==1.1), deprecated=True, deprecatorRequirement(ordereddict<0.0), reason=ordereddict is part of Python 2.7 and above. If you are still running Python 2.6, please upgrade!
 
 Package
 ~~~~~~~
