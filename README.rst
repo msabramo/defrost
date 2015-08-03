@@ -18,8 +18,97 @@ Install
 Usage
 -----
 
-There are 3 fundamental objects available: ``Package``, ``Requirement``, and
-``PipFreeze`` objects.
+There are 3 fundamental objects available:
+
+- ``PipFreeze``: a pythonic container of packages that takes a pip freeze
+  output as input.
+- ``Package``: represents a package instance at an exact version (pinned)
+  held by a PipFreeze container (e.g. ``foo==1.2``)
+- ``Requirement``: a requirement for a package represents one version
+  or a range of versions for a given package, e.g. ``foo>=2.0`` is a
+  requirement for all versions of foo greater or equal to 2.0. ``foo`` without
+  a version specifier would mean all versions of ``foo``.
+
+PipFreeze
+~~~~~~~~~
+
+PipFreeze takes a pip freeze output as input and builds packages internally.
+
+.. code-block:: python
+
+    >>> from pipfreeze import PipFreeze
+
+    >>> pip_freeze_output = """\
+    foo==1.2.3
+    bar==2.0
+    """
+
+    >>> pip_freeze = PipFreeze(pip_freeze_output)
+    >>> len(pip_freeze)
+    2
+
+    >>> list(pip_freeze)
+    [Package(foo==1.2.3), Package(bar==2.0)]
+
+    # test presence of package foo that is less or equal to v2.0
+    >>> 'foo<=2.0' in pip_freeze
+    True
+
+    # test presence of any version of package zoo
+    >>> 'zoo' in pip_freeze
+    False
+
+    # test can also be done with a Package instance
+    >>> Package('foo==0.1') in pip_freeze
+    False
+
+    # ... or with a Requirement
+    >>> Requirement('bar>=2.0') in pip_freeze
+    True
+
+Package deprecation
+~~~~~~~~~~~~~~~~~~~
+
+You can mark packages as deprecated by declaring a list of requirements in a
+YAML file then loading it and passing the result of it to
+``PipFreeze.load_requirements()``. Packages present in PipFreeze will be marked
+as deprecated if they don't satisfy the loaded requirements. You can also
+provide an optional reason to why a package is deprecated.
+
+Here is sample YAML file:
+
+.. code-block:: yaml
+
+   ---
+   requirements:
+   - requirement: foobar<1.0
+     reason: foobar pre-1.0 is no longer supported, please upgrade to 1.x
+
+   - requirement: ordereddict
+     reason: ordereddict is part of Python 2.7 and above. If you are still running Python 2.6, please upgrade!
+
+And this is how you would go about loading requirements and finding deprecated
+packages:
+
+.. code-block:: python
+
+    >>> pip_freeze = PipFreeze("""\
+    foobar==0.8
+    bar==2.0
+    ordereddict==1.1
+    """)
+
+    >>> import yaml
+    >>> reqs = yaml.load('my-reqs.yaml')
+    >>> pip_freeze.load_requirements(reqs)
+    >>> pip_freeze.deprecated_packages()
+    [Package(foobar==0.8), Package(ordereddict==1.1)]
+    >>> for package in pip_freeze:
+    ...     print("Package %s, deprecated: %s, reason: %s" % (package.name, package.deprecated, package.deprecation_reason))
+    ...
+    Package foobar, deprecated: True, reason: foobar pre-1.0 is no longer supported, please upgrade to 1.x
+    Package bar, deprecated: False, reason: None
+    Package ordereddict, deprecated: True, reason: ordereddict is part of Python 2.7 and above. If you are still running Python 2.6, please upgrade!
 
 Package
 ~~~~~~~
@@ -47,6 +136,19 @@ If you don't pass an exact version in your requirement it will raise a ``ValueEr
         ...
     ValueError: foo does not represent an exact package version; the format should be foo==1.0
 
+You can also manually deprecate packages:
+
+.. code-block:: python
+
+    >>> package = Package('foo==1.2')
+    >>> package.deprecated
+    False
+    >>> package.deprecate(reason='because')
+    >>> package.deprecated
+    True
+    >>> package.deprecation_reason
+    'because'
+
 Requirement
 ~~~~~~~~~~~
 
@@ -62,7 +164,8 @@ A requirement represents a range of package versions.
     >>> req.specifier
     [('>=', '1.0'), ('<', '2.0')]
 
-Requirements play well with packages. You can check if a package satifies a requirement properly.
+Requirements play well with packages. Using the Python operator ``in``, you
+can check if a package satifies a requirement.
 
 .. code-block:: python
 
@@ -73,94 +176,3 @@ Requirements play well with packages. You can check if a package satifies a requ
     True
     >>> Package('foo==0.1') in req
     False
-
-PipFreeze
-~~~~~~~~~
-
-PipFreeze takes a pip freeze output as input and builds packages internally.
-
-.. code-block:: python
-
-    >>> from pipfreeze import PipFreeze
-
-    >>> pip_freeze_output = """\
-    foo==1.2.3
-    bar==2.0
-    """
-
-    >>> pip_freeze = PipFreeze(pip_freeze_output)
-    >>> len(pip_freeze)
-    2
-
-    >>> list(pip_freeze)
-    [Package(foo==1.2.3), Package(bar==2.0)]
-
-    >>> 'foo<=2.0' in pip_freeze
-    True
-
-    >>> 'zoo' in pip_freeze
-    False
-
-    # test presence with Package instance
-    >>> Package('foo==0.1') in pip_freeze
-    False
-
-    # test presence with Requirement instance
-    >>> Requirement('bar>=2.0') in pip_freeze
-    True
-
-Package deprecation
-~~~~~~~~~~~~~~~~~~~
-
-You can mark packages as deprecated by declaring a list of requirements in a
-YAML file then loading it and passing the result of it to
-``PipFreeze.load_requirements()``. Packages present in PipFreeze will be marked
-as deprecated if they don't satisfy the loaded requirements. You can also
-provide an optional reason to why a package is deprecated.
-
-Here is sample YAML file:
-
-.. code-block:: yaml
-
-   ---
-   requirements:
-   - requirement: foobar<1.0
-     reason: foobar pre-1.0 is no longer supported, please upgrade to 1.x
-
-   - requirement: ordereddict
-     reason: ordereddict is part of Python 2.7 and above. If you are still running Python 2.6, please upgrade!
-
-And this is how you would go about finding deprecated packages:
-
-.. code-block:: python
-
-    >>> pip_freeze = PipFreeze("""\
-    foobar==0.8
-    bar==2.0
-    ordereddict==1.1
-    """)
-
-    >>> import yaml
-    >>> reqs = yaml.load('my-reqs.yaml')
-    >>> pip_freeze.load_requirements(reqs)
-    >>> deprecated = pip_freeze.deprecated_packages()
-    >>> deprecated
-    [Package(foobar==0.8), Package(ordereddict==1.1)]
-    >>> for package in deprecated:
-    ...     print("Package %s, deprecated: %s (%s)" % (package.name, package.deprecated, package.deprecation_reason))
-    ...
-    Package foobar, deprecated: True (foobar pre-1.0 is no longer supported, please upgrade to 1.x)
-    Package ordereddict, deprecated: True (ordereddict is part of Python 2.7 and above. If you are still running Python 2.6, please upgrade!)
-
-You can also manually deprecate packages:
-
-.. code-block:: python
-
-    >>> package = Package('foo==1.2')
-    >>> package.deprecated
-    False
-    >>> package.deprecate(reason='because')
-    >>> package.deprecated
-    True
-    >>> package.deprecation_reason
-    'because'
