@@ -17,7 +17,7 @@ setup(
     author_email="alexandre@surveymonkey.com",
     maintainer="Alex Conrad",
     maintainer_email="alexandre@surveymonkey.com",
-    description="A tool to audit pip freeze outputs"
+    description="A tool to audit pip freeze outputs "
                 "and test version requirements",
     license="MIT License",
     keywords="pip freeze output audit version requirements satified",
