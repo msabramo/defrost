@@ -97,6 +97,7 @@ def test_package__hash(req1, req2, expected):
     ('foobar==2.0', 'foobar==1.0', ['foobar==1.0', 'foobar==2.0']),
     ('foobar==2.0', 'foobar==0.0', ['foobar==0.0', 'foobar==2.0']),
     ('FOOBAR==2.0', 'foobar==1.0', ['foobar==1.0', 'FOOBAR==2.0']),  # sort case-insensitive, upper-case comes first by default
+    ('foo-bar==1.0', 'foo==2.0', ['foo==2.0', 'foo-bar==1.0']),  # same prefix
 ])
 def test_package__lt_for_sorting(req1, req2, expected):
     from pipfreeze import Package

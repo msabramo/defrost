@@ -1,3 +1,10 @@
+Unreleased
+==========
+
+* sort packages on name and then version such that ``foo==2.0`` comes before
+  ``foo-bar==1.0`` which is not the case when both are treated as plain
+  strings.
+
 0.0.3
 =====
 
