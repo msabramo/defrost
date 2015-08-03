@@ -105,16 +105,17 @@ def test_package__lt_for_sorting(req1, req2, expected):
     package2 = Package(req2)
     assert sorted([package1, package2]) == [Package(r) for r in expected]
 
-@pytest.mark.parametrize("req, reason", [
-    ('foobar==1.0', 'because'),
-    ('foobar==1.0', None),
+@pytest.mark.parametrize("req, deprecate_kwargs", [
+    ('foobar==1.0', {}),
+    ('foobar==1.0', {'reason': 'because'}),
+    ('foobar==1.0', {'deprecator': 'some-deprecator'}),
+    ('foobar==1.0', {'reason': 'why not?', 'deprecator': 'The Return Of The Deprecator'}),
 ])
-def test_package__deprecate(req, reason):
+def test_package__deprecate(req, deprecate_kwargs):
     from pipfreeze import Package
     package = Package('foo==1.0')
-    if reason is None:
-        package.deprecate()
-    else:
-        package.deprecate(reason=reason)
-    package.deprecated is True
-    package.deprecation_reason == reason
+    package.deprecate(**deprecate_kwargs)
+
+    assert package.deprecated is True
+    assert package.deprecation_reason == deprecate_kwargs.get('reason')
+    assert package.deprecator == deprecate_kwargs.get('deprecator')

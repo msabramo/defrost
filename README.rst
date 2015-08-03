@@ -101,7 +101,7 @@ packages:
     >>> import yaml
     >>> reqs = yaml.load('my-reqs.yaml')
     >>> pip_freeze.load_requirements(reqs)
-    >>> pip_freeze.deprecated_packages()
+    >>> pip_freeze.deprecated
     [Package(foobar==0.8), Package(ordereddict==1.1)]
     >>> for package in pip_freeze:
     ...     print("Package %s, deprecated: %s, reason: %s" % (package.name, package.deprecated, package.deprecation_reason))
