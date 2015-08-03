@@ -3,6 +3,8 @@ Unreleased
 
 * add attribute ``Package.deprecated_by``
 * method ``Package.deprecate()`` takes an optional ``deprecated_by`` argument.
+* add command line utility to list deprecated packages given a requirement file
+  and a pip freeze output file.
 
 0.0.4
 =====

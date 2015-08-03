@@ -10,6 +10,11 @@ version = '0.0.4'
 README = read('README.rst')
 CHANGES = read('CHANGES.rst')
 
+requires = [
+    'click>=4.0',
+    'PyYAML',
+]
+
 setup(
     name="pipfreeze",
     version=version,
@@ -27,6 +32,7 @@ setup(
     packages=find_packages(exclude=['tests']),
     long_description='%s\n\n%s' % (README, CHANGES),
     setup_requires=['setuptools_git'],
+    install_requires=requires,
     classifiers=[
         "Topic :: Software Development :: Libraries :: Python Modules",
         "License :: OSI Approved :: MIT License",
@@ -38,4 +44,9 @@ setup(
         "Programming Language :: Python :: 3.3",
         "Programming Language :: Python :: 3.4"
     ],
+    entry_points={
+        'console_scripts': [
+            'pipfreeze=pipfreeze.cli:pipfreeze'
+        ],
+    },
 )

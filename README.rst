@@ -18,6 +18,26 @@ Install
 Usage
 -----
 
+.. code-block::
+
+    $ pipfreeze --help
+    Usage: pipfreeze [OPTIONS] REQUIREMENT_FILE PIP_FREEZE_FILE
+
+    Options:
+      --help  Show this message and exit.
+
+Argument ``REQUIREMENT_FILE`` is a YAML file listing the expected
+requirements to be satisfied by the output of pip freeze. Argument
+``PIP_FREEZE_FILE`` is a file containing the output of a pip freeze command.
+
+.. code-block::
+
+    $ pipfreeze requirements.yml pipfreeze.txt
+    Package(foobar==1.2) does not satisfy Requirement(foobar>=2.0): please upgrade by 2016-01-01
+
+Library
+-------
+
 There are 3 fundamental objects available:
 
 - ``PipFreeze``: a pythonic container of packages that takes a pip freeze
