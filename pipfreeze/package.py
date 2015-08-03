@@ -67,7 +67,7 @@ class Package(object):
         self._req = Requirement(pinned_requirement)
         self.deprecated = False
         self.deprecation_reason = None
-        self.deprecator = None
+        self.deprecated_by = None
 
         # Ensure we're dealing with an exact package version
         if len(self._req.specifiers) != 1 or \
@@ -112,7 +112,7 @@ class Package(object):
     def version(self):
         return self._req.specifiers[0][1]
 
-    def deprecate(self, reason=None, deprecator=None):
+    def deprecate(self, reason=None, deprecated_by=None):
         self.deprecated = True
         self.deprecation_reason = reason
-        self.deprecator = deprecator
+        self.deprecated_by = deprecated_by

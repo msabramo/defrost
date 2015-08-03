@@ -104,12 +104,12 @@ packages:
     >>> pip_freeze.deprecated
     [Package(foobar==0.8), Package(ordereddict==1.1)]
     >>> for package in pip_freeze.deprecated:
-    ...     print("%s, deprecated=%s, deprecator=%s, reason=%s" % (
-                package, package.deprecated, package.deprecator, package.deprecation_reason
+    ...     print("%s: deprecated=%s, deprecated_by=%s, reason=%s" % (
+                package, package.deprecated, package.deprecated_by, package.deprecation_reason
             ))
     ...
-    Package(foobar==0.8), deprecated=True, deprecatorRequirement(foobar>=1.0), reason=foobar pre-1.0 is no longer supported, please upgrade to 1.x
-    Package(ordereddict==1.1), deprecated=True, deprecatorRequirement(ordereddict<0.0), reason=ordereddict is part of Python 2.7 and above. If you are still running Python 2.6, please upgrade!
+    Package(foobar==0.8): deprecated=True, deprecated_by=Requirement(foobar>=1.0), reason=foobar pre-1.0 is no longer supported, please upgrade to 1.x
+    Package(ordereddict==1.1): deprecated=True, deprecated_by=Requirement(ordereddict<0.0), reason=ordereddict is part of Python 2.7 and above. If you are still running Python 2.6, please upgrade!
 
 Package
 ~~~~~~~

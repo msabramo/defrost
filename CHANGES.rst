@@ -1,8 +1,8 @@
 Unreleased
 ==========
 
-* add attribute ``Package.deprecator``
-* method ``Package.deprecate()`` takes an optional ``deprecator`` argument.
+* add attribute ``Package.deprecated_by``
+* method ``Package.deprecate()`` takes an optional ``deprecated_by`` argument.
 
 0.0.4
 =====
