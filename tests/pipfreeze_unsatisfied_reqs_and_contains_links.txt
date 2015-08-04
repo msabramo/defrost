@@ -1,0 +1,3 @@
+foo==0.1
+-f /opt/pip/wheels
+-e git+git@github.com:SurveyMonkey/defrost.git@4d16494bdc217b416162d43733396479713652a2#egg=defrost-ignore-pip-freeze-links

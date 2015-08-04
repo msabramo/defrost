@@ -1,9 +1,18 @@
-from .package import Package, Requirement
+import io
+
 from collections import OrderedDict
+from .package import Package, Requirement
 
 
 def _parse_pip_freeze(pip_freeze_output):
-    for req in pip_freeze_output.split():
+    if isinstance(pip_freeze_output, bytes):
+        pip_freeze_output = pip_freeze_output.decode('utf-8')
+
+    pip_freeze_output = io.StringIO(pip_freeze_output)
+
+    for req in pip_freeze_output.readlines():
+        if req.startswith('-'):
+            continue
         yield Package(req)
 
 

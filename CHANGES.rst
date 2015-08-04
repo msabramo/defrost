@@ -3,6 +3,7 @@ Unreleased
 
 * remove attributes ``Package.raw`` and ``Requirement.raw``, instead use
   ``Package.__str__()`` and ``Requirement.__str__()``.
+* ignore links found in pip freeze output (-f or -e lines)
 
 0.1.0
 =====
