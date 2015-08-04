@@ -3,17 +3,18 @@ import pytest
 from defrost import Requirement, Package
 
 
-@pytest.mark.parametrize("req, req_name, req_specs, req_raw, req_id", [
-    ('foobar==1.2', 'foobar', [('==', '1.2')], 'foobar==1.2', 'foobar'),
-    ('foo>=1.2,<2.0', 'foo', [('>=', '1.2'), ('<', '2.0')], 'foo>=1.2,<2.0', 'foo'),
+@pytest.mark.parametrize("req, req_name, req_specs, req_id, req_repr, req_str", [
+    ('foobar==1.2', 'foobar', [('==', '1.2')], 'foobar', 'Requirement(foobar==1.2)', 'foobar==1.2'),
+    ('foo>=1.2,<2.0', 'foo', [('>=', '1.2'), ('<', '2.0')], 'foo', 'Requirement(foo<2.0,>=1.2)', 'foo<2.0,>=1.2'),
 ])
-def test_requirement(req, req_name, req_specs, req_raw, req_id):
+def test_requirement(req, req_name, req_specs, req_id, req_repr, req_str):
     from defrost import Requirement
     req = Requirement(req)
     assert req.id == req_id
     assert req.name == req_name
     assert req.specifiers == req_specs
-    assert req.raw == req_raw
+    assert repr(req) == req_repr
+    assert str(req) == req_str
 
 
 @pytest.mark.parametrize("req1, req2, expected", [

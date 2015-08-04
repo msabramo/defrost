@@ -12,7 +12,7 @@ def defrost(requirement_file, pip_freeze_file):
     pip_freeze = PipFreeze(pip_freeze_file.read())
     pip_freeze.load_requirements(reqs)
     for package in pip_freeze.deprecated:
-        click.echo("{} does not satisfy {}: {}".format(
+        click.echo("{!r} does not satisfy {!r}: {}".format(
             package,
             package.deprecated_by,
             package.deprecation_reason,

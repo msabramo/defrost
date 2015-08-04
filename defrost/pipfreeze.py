@@ -21,7 +21,7 @@ class PipFreeze(object):
 
     def __contains__(self, requirement):
         if isinstance(requirement, Package):
-            requirement = Requirement(requirement.raw)
+            requirement = Requirement(str(requirement))
 
         elif isinstance(requirement, str):
             requirement = Requirement(requirement)

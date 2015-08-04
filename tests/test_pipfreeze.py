@@ -80,5 +80,5 @@ def test_pip_freeze__load_requirements(freeze, reqs, expected_deprecated):
     assert len(pip_freeze.deprecated) == len(expected_deprecated)
     for package, (pin, reason) in zip(pip_freeze.deprecated, expected_deprecated):
         assert package.deprecated is True
-        assert package.raw == pin
+        assert str(package) == pin
         assert package.deprecation_reason == reason

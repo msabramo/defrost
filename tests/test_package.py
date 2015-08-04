@@ -2,19 +2,21 @@ import pytest
 from defrost import Package
 
 
-@pytest.mark.parametrize("req, req_name, req_specs, req_raw, req_id, req_version", [
-    ('foobar==1.2', 'foobar', [('==', '1.2')], 'foobar==1.2', 'foobar', '1.2'),
-    ('foobar===1.2', 'foobar', [('===', '1.2')], 'foobar===1.2', 'foobar', '1.2'),
+@pytest.mark.parametrize("req, req_name, req_specs, req_id, req_version, req_repr, req_str", [
+    ('foobar==1.2', 'foobar', [('==', '1.2')], 'foobar', '1.2', 'Package(foobar==1.2)', 'foobar==1.2'),
+    ('foobar==1.2\n', 'foobar', [('==', '1.2')], 'foobar', '1.2', 'Package(foobar==1.2)', 'foobar==1.2'),
+    ('foobar===1.2', 'foobar', [('===', '1.2')], 'foobar', '1.2', 'Package(foobar===1.2)', 'foobar===1.2'),
 ])
-def test_package(req, req_name, req_specs, req_raw, req_id, req_version):
+def test_package(req, req_name, req_specs, req_id, req_version, req_repr, req_str):
     from defrost import Package
     package = Package(req)
     assert package.id == req_id
     assert package.name == req_name
-    assert package.raw == req_raw
     assert package.version == req_version
     assert package.deprecated is False
     assert package.deprecation_reason is None
+    assert repr(package) == req_repr
+    assert str(package) == req_str
 
 
 @pytest.mark.parametrize("req", [
