@@ -1,4 +1,5 @@
 import pytest
+from defrost import Package
 
 
 @pytest.mark.parametrize("req, req_name, req_specs, req_raw, req_id, req_version", [
@@ -21,7 +22,6 @@ def test_package(req, req_name, req_specs, req_raw, req_id, req_version):
     ('foobar'),
 ])
 def test_package__invalid_req_raises_ValueError(req):
-    from defrost import Package
     pytest.raises(
         ValueError,
         Package,
@@ -29,91 +29,61 @@ def test_package__invalid_req_raises_ValueError(req):
     )
 
 
-@pytest.mark.parametrize("req1, req2, expected", [
-    ('foobar==1.2', 'foobar==1.2', True),
-    ('foobar==1.2', 'foobar==2.0', False),
+@pytest.mark.parametrize("package, other, expected", [
+    (Package('foobar==1.2'), Package('foobar==1.2'), True),
+    (Package('foobar==1.2'), Package('foobar==2.0'), False),
+    (Package('foobar==1.2'), None, False),
+    (Package('foobar==1.2'), object(), False),
 ])
-def test_package__equals_of_same_type(req1, req2, expected):
-    from defrost import Package
-    package1 = Package(req1)
-    package2 = Package(req2)
-    assert (package1 == package2) is expected
-
-
-@pytest.mark.parametrize("req, other, expected", [
-    ('foobar==1.2', None, False),
-    ('foobar==1.2', object(), False),
-])
-def test_package__equals_of_different_type(req, other, expected):
-    from defrost import Package
-    package = Package(req)
+def test_package__equals(package, other, expected):
     assert (package == other) is expected
 
 
-@pytest.mark.parametrize("req1, req2, expected", [
-    ('foobar==1.2', 'foobar==1.2', False),
-    ('foobar==1.2', 'foobar==2.0', True),
+@pytest.mark.parametrize("package, other, expected", [
+    (Package('foobar==1.2'), Package('foobar==1.2'), False),
+    (Package('foobar==1.2'), Package('foobar==2.0'), True),
+    (Package('foobar==1.2'), None, True),
+    (Package('foobar==1.2'), object(), True),
 ])
-def test_package__not_equals_of_same_type(req1, req2, expected):
-    from defrost import Package
-    package1 = Package(req1)
-    package2 = Package(req2)
-    assert (package1 != package2) is expected
-
-
-@pytest.mark.parametrize("req, other, expected", [
-    ('foobar==1.2', None, True),
-    ('foobar==1.2', object(), True),
-])
-def test_package__not_equals_of_different_type(req, other, expected):
-    from defrost import Package
-    package = Package(req)
+def test_package__not_equals(package, other, expected):
     assert (package != other) is expected
 
 
-@pytest.mark.parametrize("req, expected", [
-    ('foobar==1.2', 'Package(foobar==1.2)'),
+@pytest.mark.parametrize("package, expected", [
+    (Package('foobar==1.2'), 'Package(foobar==1.2)'),
 ])
-def test_package__repr(req, expected):
-    from defrost import Package
-    package = Package(req)
+def test_package__repr(package, expected):
     assert repr(package) == expected
 
 
-@pytest.mark.parametrize("req1, req2, expected", [
-    ('foobar==1.2', 'foobar==1.2', 1),
-    ('foobar==1.0', 'foobar==1.2', 2),
+@pytest.mark.parametrize("package1, package2, expected", [
+    (Package('foobar==1.2'), Package('foobar==1.2'), 1),
+    (Package('foobar==1.0'), Package('foobar==1.2'), 2),
 ])
-def test_package__hash(req1, req2, expected):
-    from defrost import Package
-    s = {Package(req1), Package(req2)}
+def test_package__hash(package1, package2, expected):
+    s = {package1, package2}
     assert len(s) == expected
 
 
-@pytest.mark.parametrize("req1, req2, expected", [
-    ('foobar==1.2', 'foobar==1.2', ['foobar==1.2', 'foobar==1.2']),  # all equal
-    ('foobar==1.0', 'foobar==1.2', ['foobar==1.0', 'foobar==1.2']),  # already sorted
-    ('foobar==1.2', 'foobar==1.0', ['foobar==1.0', 'foobar==1.2']),
-    ('foobar==2.0', 'foobar==1.0', ['foobar==1.0', 'foobar==2.0']),
-    ('foobar==2.0', 'foobar==0.0', ['foobar==0.0', 'foobar==2.0']),
-    ('FOOBAR==2.0', 'foobar==1.0', ['foobar==1.0', 'FOOBAR==2.0']),  # sort case-insensitive, upper-case comes first by default
-    ('foo-bar==1.0', 'foo==2.0', ['foo==2.0', 'foo-bar==1.0']),  # same prefix
+@pytest.mark.parametrize("package1, package2, expected", [
+    (Package('foobar==1.2'), Package('foobar==1.2'), [Package('foobar==1.2'), Package('foobar==1.2')]),  # all equal
+    (Package('foobar==1.0'), Package('foobar==1.2'), [Package('foobar==1.0'), Package('foobar==1.2')]),  # already sorted
+    (Package('foobar==1.2'), Package('foobar==1.0'), [Package('foobar==1.0'), Package('foobar==1.2')]),
+    (Package('foobar==2.0'), Package('foobar==1.0'), [Package('foobar==1.0'), Package('foobar==2.0')]),
+    (Package('foobar==2.0'), Package('foobar==0.0'), [Package('foobar==0.0'), Package('foobar==2.0')]),
+    (Package('FOOBAR==2.0'), Package('foobar==1.0'), [Package('foobar==1.0'), Package('FOOBAR==2.0')]),  # sort case-insensitive, upper-case comes first by default
+    (Package('foo-bar==1.0'), Package('foo==2.0'),   [Package('foo==2.0'), Package('foo-bar==1.0')]),  # same prefix
 ])
-def test_package__lt_for_sorting(req1, req2, expected):
-    from defrost import Package
-    package1 = Package(req1)
-    package2 = Package(req2)
-    assert sorted([package1, package2]) == [Package(r) for r in expected]
+def test_package__lt_for_sorting(package1, package2, expected):
+    assert sorted([package1, package2]) == expected
 
-@pytest.mark.parametrize("req, deprecate_kwargs", [
-    ('foobar==1.0', {}),
-    ('foobar==1.0', {'reason': 'because'}),
-    ('foobar==1.0', {'deprecated_by': 'some-deprecator'}),
-    ('foobar==1.0', {'reason': 'why not?', 'deprecated_by': 'The Return Of The Deprecator'}),
+@pytest.mark.parametrize("package, deprecate_kwargs", [
+    (Package('foobar==1.0'), {}),
+    (Package('foobar==1.0'), {'reason': 'because'}),
+    (Package('foobar==1.0'), {'deprecated_by': 'some-deprecator'}),
+    (Package('foobar==1.0'), {'reason': 'why not?', 'deprecated_by': 'The Return Of The Deprecator'}),
 ])
-def test_package__deprecate(req, deprecate_kwargs):
-    from defrost import Package
-    package = Package('foo==1.0')
+def test_package__deprecate(package, deprecate_kwargs):
     package.deprecate(**deprecate_kwargs)
 
     assert package.deprecated is True
