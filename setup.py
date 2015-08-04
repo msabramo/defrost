@@ -16,7 +16,7 @@ requires = [
 ]
 
 setup(
-    name="pipfreeze",
+    name="defrost",
     version=version,
     author="Alex Conrad",
     author_email="alexandre@surveymonkey.com",
@@ -25,8 +25,8 @@ setup(
     description="A tool to audit pip freeze outputs "
                 "and test version requirements",
     license="MIT License",
-    keywords="pip freeze output audit version requirements satified",
-    url="https://github.com/SurveyMonkey/pipfreeze",
+    keywords="defrost pip freeze output audit version requirements deprecate",
+    url="https://github.com/SurveyMonkey/defrost",
     zip_safe=False,
     include_package_data=True,
     packages=find_packages(exclude=['tests']),
@@ -46,7 +46,7 @@ setup(
     ],
     entry_points={
         'console_scripts': [
-            'pipfreeze=pipfreeze.cli:pipfreeze'
+            'defrost=defrost.cli:defrost'
         ],
     },
 )

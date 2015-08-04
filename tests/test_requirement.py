@@ -6,7 +6,7 @@ import pytest
     ('foo>=1.2,<2.0', 'foo', [('>=', '1.2'), ('<', '2.0')], 'foo>=1.2,<2.0', 'foo'),
 ])
 def test_requirement(req, req_name, req_specs, req_raw, req_id):
-    from pipfreeze import Requirement
+    from defrost import Requirement
     req = Requirement(req)
     assert req.id == req_id
     assert req.name == req_name
@@ -20,7 +20,7 @@ def test_requirement(req, req_name, req_specs, req_raw, req_id):
     ('foobar==1.2', 'foobar', False),
 ])
 def test_requirement__equals_same_type(req1, req2, expected):
-    from pipfreeze import Requirement
+    from defrost import Requirement
     req1 = Requirement(req1)
     req2 = Requirement(req2)
     assert (req1 == req2) is expected
@@ -31,7 +31,7 @@ def test_requirement__equals_same_type(req1, req2, expected):
     ('foobar>=1.2', object(), False),
 ])
 def test_requirement__equals_different_type(req, other, expected):
-    from pipfreeze import Requirement
+    from defrost import Requirement
     req = Requirement(req)
     assert (req == other) is expected
 
@@ -42,7 +42,7 @@ def test_requirement__equals_different_type(req, other, expected):
     ('foobar==1.2', 'foobar', True),
 ])
 def test_requirement__not_equals_same_type(req1, req2, expected):
-    from pipfreeze import Requirement
+    from defrost import Requirement
     req1 = Requirement(req1)
     req2 = Requirement(req2)
     assert (req1 != req2) is expected
@@ -53,7 +53,7 @@ def test_requirement__not_equals_same_type(req1, req2, expected):
     ('foobar>=1.2', object(), True),
 ])
 def test_requirement__not_equals_different_type(req, other, expected):
-    from pipfreeze import Requirement
+    from defrost import Requirement
     req = Requirement(req)
     assert (req != other) is expected
 
@@ -71,7 +71,7 @@ def test_requirement__not_equals_different_type(req, other, expected):
     ('foobar==1.2', 'foo', False),
 ])
 def test_requirement__contains_package(package, req, expected):
-    from pipfreeze import Requirement, Package
+    from defrost import Requirement, Package
     package = Package(package)
     req = Requirement(req)
     assert (package in req) is expected
@@ -81,7 +81,7 @@ def test_requirement__contains_package(package, req, expected):
     ('foobar>=1.2', 'Requirement(foobar>=1.2)'),
 ])
 def test_requirement__repr(req, expected):
-    from pipfreeze import Requirement
+    from defrost import Requirement
     req = Requirement(req)
     assert repr(req) == expected
 
@@ -92,6 +92,6 @@ def test_requirement__repr(req, expected):
     ('foobar==1.0', 'foobar==1.2', 2),
 ])
 def test_requirement__hash(req1, req2, expected):
-    from pipfreeze import Requirement
+    from defrost import Requirement
     s = {Requirement(req1), Requirement(req2)}
     assert len(s) == expected

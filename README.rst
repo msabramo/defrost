@@ -1,39 +1,49 @@
-pipfreeze
-=========
+defrost
+=======
 
-A tool to audit pip freeze outputs and test version requirements.
+NOTE: this package was originally called ``pipfreeze`` but was renamed to avoid
+confusion with the command ``pip freeze``.
 
-This tool can be used to audit the pip freeze output of a virtualenv and check
-whether the versions installed satisfy your requirements. Packages that don't
-satisfy your requirements can be marked as deprecated. Your requirements can be
-declared in a YAML file.
+Defrost is a command line tool to check if the output of the ``pip freeze``
+command complies with a set of package requirements defined in a YAML file.
+
+Usage
+-----
+
+First define a set of package requirements in a YAML file, ``requirements.yml``.
+
+.. code-block:: yaml
+
+   ---
+   requirements:
+   - requirement: foobar>=1.0
+     reason: foobar pre-1.0 is no longer supported, please upgrade to 1.x
+
+   - requirement: ordereddict<0.0
+     reason: OrderedDict is part of Python 2.7 and above. If you are still running Python 2.6, please upgrade!
+
+Then you can pipe the output of ``pip freeze`` to defrost while providing the YAML file.
+
+.. code-block::
+
+    $ pip freeze > freeze.out
+    $ defrost requirements.yml freeze.out
+    Package(foobar==1.2) does not satisfy Requirement(foobar>=2.0): foobar pre-1.0 is no longer supported, please upgrade to 1.x
+
+Defrost can also take the pip freeze output as stdin by passing a dash sign
+``-`` as argument in place of the pip freeze output file.
+
+.. code-block::
+
+    $ pip freeze | defrost requirements.yml -
+    Package(foobar==1.2) does not satisfy Requirement(foobar>=2.0): foobar pre-1.0 is no longer supported, please upgrade to 1.x
 
 Install
 -------
 
 .. code-block::
 
-    pip install pipfreeze
-
-Usage
------
-
-.. code-block::
-
-    $ pipfreeze --help
-    Usage: pipfreeze [OPTIONS] REQUIREMENT_FILE PIP_FREEZE_FILE
-
-    Options:
-      --help  Show this message and exit.
-
-Argument ``REQUIREMENT_FILE`` is a YAML file listing the expected
-requirements to be satisfied by the output of pip freeze. Argument
-``PIP_FREEZE_FILE`` is a file containing the output of a pip freeze command.
-
-.. code-block::
-
-    $ pipfreeze requirements.yml pipfreeze.txt
-    Package(foobar==1.2) does not satisfy Requirement(foobar>=2.0): please upgrade by 2016-01-01
+    pip install defrost
 
 Library
 -------
@@ -56,7 +66,7 @@ PipFreeze takes a pip freeze output as input and builds packages internally.
 
 .. code-block:: python
 
-    >>> from pipfreeze import PipFreeze
+    >>> from defrost import PipFreeze
 
     >>> pip_freeze_output = """\
     foo==1.2.3
@@ -89,26 +99,11 @@ PipFreeze takes a pip freeze output as input and builds packages internally.
 Package deprecation
 ~~~~~~~~~~~~~~~~~~~
 
-You can mark packages as deprecated by declaring a list of requirements in a
-YAML file then loading it and passing the result of it to
-``PipFreeze.load_requirements()``. Packages present in PipFreeze will be marked
-as deprecated if they don't satisfy the loaded requirements. You can also
-provide an optional reason to why a package is deprecated.
-
-Here is sample YAML file:
-
-.. code-block:: yaml
-
-   ---
-   requirements:
-   - requirement: foobar>=1.0
-     reason: foobar pre-1.0 is no longer supported, please upgrade to 1.x
-
-   - requirement: ordereddict<0.0
-     reason: ordereddict is part of Python 2.7 and above. If you are still running Python 2.6, please upgrade!
-
-And this is how you would go about loading requirements and finding deprecated
-packages:
+You can mark packages as deprecated by loading the YAML requirements file and
+passing the result of it to ``PipFreeze.load_requirements()``. Packages present
+in PipFreeze will be marked as deprecated if they don't satisfy the loaded
+requirements. You can also provide an optional reason to why a package is
+deprecated.
 
 .. code-block:: python
 
@@ -138,7 +133,7 @@ Packages take an exact package version as input.
 
 .. code-block:: python
 
-    >>> from pipfreeze import Package
+    >>> from defrost import Package
 
     >>> package = Package('foo==1.2')
     >>> package.name
@@ -177,7 +172,7 @@ A requirement represents a range of package versions.
 
 .. code-block:: python
 
-    >>> from pipfreeze import Requirement
+    >>> from defrost import Requirement
 
     >>> req = Requirement('foo>=1.0,<2.0')
     >>> req.name
