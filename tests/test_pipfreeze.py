@@ -1,6 +1,6 @@
 import pytest
 
-from pipfreeze import Package, Requirement
+from defrost import Package, Requirement
 
 
 @pytest.mark.parametrize("freeze, expected", [
@@ -9,7 +9,7 @@ from pipfreeze import Package, Requirement
     ("foo==1.2.3\nbar==2.0", True),
 ])
 def test_pip_freeze__bool(freeze, expected):
-    from pipfreeze import PipFreeze
+    from defrost import PipFreeze
     pip_freeze = PipFreeze(freeze)
     assert bool(pip_freeze) is expected
 
@@ -20,7 +20,7 @@ def test_pip_freeze__bool(freeze, expected):
     ("foo==1.2.3\nbar==2.0", ["foo==1.2.3", "bar==2.0"]),
 ])
 def test_pip_freeze__iter(freeze, expected):
-    from pipfreeze import PipFreeze, Package
+    from defrost import PipFreeze, Package
     pip_freeze = PipFreeze(freeze)
     assert list(pip_freeze) == [Package(req) for req in expected]
 
@@ -31,7 +31,7 @@ def test_pip_freeze__iter(freeze, expected):
     ("foo==1.2.3\nbar==2.0", 2),
 ])
 def test_pip_freeze__len(freeze, expected):
-    from pipfreeze import PipFreeze
+    from defrost import PipFreeze
     pip_freeze = PipFreeze(freeze)
     assert len(pip_freeze) == expected
 
@@ -58,7 +58,7 @@ def test_pip_freeze__len(freeze, expected):
     ("", "foo==1.2", False),
 ])
 def test_pip_freeze__contains(freeze, package, expected):
-    from pipfreeze import PipFreeze
+    from defrost import PipFreeze
     pip_freeze = PipFreeze(freeze)
     assert (package in pip_freeze) is expected
 
@@ -74,7 +74,7 @@ def test_pip_freeze__contains(freeze, package, expected):
     ("foo==1.2", {'requirements': [{'requirement': 'bar>=1.0', 'reason': 'upgrade'}]}, []),
 ])
 def test_pip_freeze__load_requirements(freeze, reqs, expected_deprecated):
-    from pipfreeze import PipFreeze
+    from defrost import PipFreeze
     pip_freeze = PipFreeze(freeze)
     pip_freeze.load_requirements(reqs)
     assert len(pip_freeze.deprecated) == len(expected_deprecated)

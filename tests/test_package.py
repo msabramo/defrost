@@ -6,7 +6,7 @@ import pytest
     ('foobar===1.2', 'foobar', [('===', '1.2')], 'foobar===1.2', 'foobar', '1.2'),
 ])
 def test_package(req, req_name, req_specs, req_raw, req_id, req_version):
-    from pipfreeze import Package
+    from defrost import Package
     package = Package(req)
     assert package.id == req_id
     assert package.name == req_name
@@ -21,7 +21,7 @@ def test_package(req, req_name, req_specs, req_raw, req_id, req_version):
     ('foobar'),
 ])
 def test_package__invalid_req_raises_ValueError(req):
-    from pipfreeze import Package
+    from defrost import Package
     pytest.raises(
         ValueError,
         Package,
@@ -34,7 +34,7 @@ def test_package__invalid_req_raises_ValueError(req):
     ('foobar==1.2', 'foobar==2.0', False),
 ])
 def test_package__equals_of_same_type(req1, req2, expected):
-    from pipfreeze import Package
+    from defrost import Package
     package1 = Package(req1)
     package2 = Package(req2)
     assert (package1 == package2) is expected
@@ -45,7 +45,7 @@ def test_package__equals_of_same_type(req1, req2, expected):
     ('foobar==1.2', object(), False),
 ])
 def test_package__equals_of_different_type(req, other, expected):
-    from pipfreeze import Package
+    from defrost import Package
     package = Package(req)
     assert (package == other) is expected
 
@@ -55,7 +55,7 @@ def test_package__equals_of_different_type(req, other, expected):
     ('foobar==1.2', 'foobar==2.0', True),
 ])
 def test_package__not_equals_of_same_type(req1, req2, expected):
-    from pipfreeze import Package
+    from defrost import Package
     package1 = Package(req1)
     package2 = Package(req2)
     assert (package1 != package2) is expected
@@ -66,7 +66,7 @@ def test_package__not_equals_of_same_type(req1, req2, expected):
     ('foobar==1.2', object(), True),
 ])
 def test_package__not_equals_of_different_type(req, other, expected):
-    from pipfreeze import Package
+    from defrost import Package
     package = Package(req)
     assert (package != other) is expected
 
@@ -75,7 +75,7 @@ def test_package__not_equals_of_different_type(req, other, expected):
     ('foobar==1.2', 'Package(foobar==1.2)'),
 ])
 def test_package__repr(req, expected):
-    from pipfreeze import Package
+    from defrost import Package
     package = Package(req)
     assert repr(package) == expected
 
@@ -85,7 +85,7 @@ def test_package__repr(req, expected):
     ('foobar==1.0', 'foobar==1.2', 2),
 ])
 def test_package__hash(req1, req2, expected):
-    from pipfreeze import Package
+    from defrost import Package
     s = {Package(req1), Package(req2)}
     assert len(s) == expected
 
@@ -100,7 +100,7 @@ def test_package__hash(req1, req2, expected):
     ('foo-bar==1.0', 'foo==2.0', ['foo==2.0', 'foo-bar==1.0']),  # same prefix
 ])
 def test_package__lt_for_sorting(req1, req2, expected):
-    from pipfreeze import Package
+    from defrost import Package
     package1 = Package(req1)
     package2 = Package(req2)
     assert sorted([package1, package2]) == [Package(r) for r in expected]
@@ -112,7 +112,7 @@ def test_package__lt_for_sorting(req1, req2, expected):
     ('foobar==1.0', {'reason': 'why not?', 'deprecated_by': 'The Return Of The Deprecator'}),
 ])
 def test_package__deprecate(req, deprecate_kwargs):
-    from pipfreeze import Package
+    from defrost import Package
     package = Package('foo==1.0')
     package.deprecate(**deprecate_kwargs)
 
