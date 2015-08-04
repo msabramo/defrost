@@ -23,7 +23,6 @@ class Requirement(object):
 
         self.id = self._req.key
         self.name = self._req.project_name
-        self.raw = requirement
         self.specifiers = self._req.specs
 
     def __contains__(self, package):
@@ -48,7 +47,10 @@ class Requirement(object):
         return not self == other
 
     def __repr__(self):
-        return "Requirement({})".format(self.raw)
+        return "Requirement({})".format(self)
+
+    def __str__(self):
+        return str(self._req)
 
 
 class Package(object):
@@ -94,11 +96,10 @@ class Package(object):
         return not self == other
 
     def __repr__(self):
-        return "Package({})".format(self.raw)
+        return "Package({})".format(self)
 
-    @property
-    def raw(self):
-        return self._req.raw
+    def __str__(self):
+        return str(self._req)
 
     @property
     def id(self):
