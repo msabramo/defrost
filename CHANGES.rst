@@ -5,6 +5,8 @@ Unreleased
 * method ``Package.deprecate()`` takes an optional ``deprecated_by`` argument.
 * add command line utility to list deprecated packages given a requirement file
   and a pip freeze output file.
+* rename project pipfreeze to defrost to avoid confusion with the command
+  ``pip freeze``.
 
 0.0.4
 =====
