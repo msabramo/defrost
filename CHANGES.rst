@@ -1,5 +1,5 @@
-Unreleased
-==========
+0.1.0
+=====
 
 * add attribute ``Package.deprecated_by``
 * method ``Package.deprecate()`` takes an optional ``deprecated_by`` argument.
