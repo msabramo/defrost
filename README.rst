@@ -10,6 +10,10 @@ command complies with a set of package requirements defined in a YAML file.
 Usage
 -----
 
+.. code-block::
+
+    defrost --help
+
 First define a set of package requirements in a YAML file, ``requirements.yml``.
 
 .. code-block:: yaml
