@@ -31,7 +31,7 @@ def defrost(exit_mode, requirement_file, pip_freeze_file):
             package,
             package.deprecated_by,
             package.deprecation_reason,
-        ))
+        ), err=True)
         if exit_code == 0:
             exit_code = exit_codes[package.deprecation_severity][exit_mode]
 
