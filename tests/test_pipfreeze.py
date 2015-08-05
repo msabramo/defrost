@@ -73,6 +73,7 @@ def test_pip_freeze__contains(freeze, package, expected):
     ("foo==1.2", {'requirements': []}, []),
     ("foo==1.2", {'requirements': [{'requirement': 'bar>=1.0', 'reason': 'upgrade'}]}, []),
     ("foo==1.2", {'requirements': [{'requirement': 'foo<1.0', 'reason': 'upgrade', 'severity': 'warn'}]}, [('foo==1.2', 'upgrade', 'warn')]),
+    ("foo==1.2", {'requirements': [{'requirement': 'foo<1.0', 'severity': 'warn'}]}, [('foo==1.2', None, 'warn')]),
 ])
 def test_pip_freeze__load_requirements(freeze, reqs, expected_deprecated):
     from defrost import PipFreeze
