@@ -9,6 +9,7 @@ Unreleased
   in the YAML file now accepts an optional ``severity`` which can be set to
   ``error`` or ``warn``. This affects the exit status code for the command line
   interface.
+* ``PipFreeze.load_requirements()`` would choke if a reason was not provided
 
 0.1.0
 =====

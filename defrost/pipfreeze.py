@@ -60,9 +60,10 @@ class PipFreeze(object):
             if package is None:
                 continue
             if package not in requirement:
-                package.deprecate(
-                    reason=req['reason'],
-                    deprecated_by=requirement,
-                    severity=req.get('severity', 'error')
-                )
+                deprecate_kwargs = {'deprecated_by': requirement}
+                if 'reason' in req:
+                    deprecate_kwargs['reason'] = req['reason']
+                if 'severity' in req:
+                    deprecate_kwargs['severity'] = req['severity']
+                package.deprecate(**deprecate_kwargs)
                 self.deprecated.append(package)
