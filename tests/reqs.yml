@@ -2,3 +2,7 @@
 requirements:
 - requirement: foo>=1.0
   reason: upgrade now!
+
+- requirement: testseverity>=1.0
+  reason: upgrade now!
+  severity: warn

@@ -15,6 +15,7 @@ def test_package(req, req_name, req_specs, req_id, req_version, req_repr, req_st
     assert package.version == req_version
     assert package.deprecated is False
     assert package.deprecation_reason is None
+    assert package.deprecation_severity is None
     assert repr(package) == req_repr
     assert str(package) == req_str
 
@@ -79,11 +80,13 @@ def test_package__hash(package1, package2, expected):
 def test_package__lt_for_sorting(package1, package2, expected):
     assert sorted([package1, package2]) == expected
 
+
 @pytest.mark.parametrize("package, deprecate_kwargs", [
     (Package('foobar==1.0'), {}),
     (Package('foobar==1.0'), {'reason': 'because'}),
     (Package('foobar==1.0'), {'deprecated_by': 'some-deprecator'}),
-    (Package('foobar==1.0'), {'reason': 'why not?', 'deprecated_by': 'The Return Of The Deprecator'}),
+    (Package('foobar==1.0'), {'severity': 'warn'}),
+    (Package('foobar==1.0'), {'reason': 'why not?', 'deprecated_by': 'The Return Of The Deprecator', 'severity': 'warn'}),
 ])
 def test_package__deprecate(package, deprecate_kwargs):
     package.deprecate(**deprecate_kwargs)
@@ -91,3 +94,4 @@ def test_package__deprecate(package, deprecate_kwargs):
     assert package.deprecated is True
     assert package.deprecation_reason == deprecate_kwargs.get('reason')
     assert package.deprecated_by == deprecate_kwargs.get('deprecated_by')
+    assert package.deprecation_severity == deprecate_kwargs.get('severity', 'error')

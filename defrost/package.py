@@ -70,6 +70,7 @@ class Package(object):
         self.deprecated = False
         self.deprecation_reason = None
         self.deprecated_by = None
+        self.deprecation_severity = None
 
         # Ensure we're dealing with an exact package version
         if len(self._req.specifiers) != 1 or \
@@ -113,7 +114,8 @@ class Package(object):
     def version(self):
         return self._req.specifiers[0][1]
 
-    def deprecate(self, reason=None, deprecated_by=None):
+    def deprecate(self, reason=None, deprecated_by=None, severity='error'):
         self.deprecated = True
         self.deprecation_reason = reason
         self.deprecated_by = deprecated_by
+        self.deprecation_severity = severity
