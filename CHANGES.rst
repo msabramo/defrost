@@ -1,5 +1,5 @@
-Unreleased
-==========
+0.2.0
+=====
 
 * remove attributes ``Package.raw`` and ``Requirement.raw``, instead use
   ``Package.__str__()`` and ``Requirement.__str__()``.
