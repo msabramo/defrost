@@ -65,20 +65,22 @@ def test_pip_freeze__contains(freeze, package, expected):
 
 @pytest.mark.parametrize("freeze, reqs, expected_deprecated", [
     ("foo==1.2", {'requirements': [{'requirement': 'foo', 'reason': 'hello'}]}, []),
-    ("foo==1.2", {'requirements': [{'requirement': 'foo<1.0', 'reason': 'upgrade'}]}, [('foo==1.2', 'upgrade')]),
+    ("foo==1.2", {'requirements': [{'requirement': 'foo<1.0', 'reason': 'upgrade'}]}, [('foo==1.2', 'upgrade', 'error')]),
     ("foo==1.2", {'requirements': [{'requirement': 'foo>=1.0', 'reason': 'upgrade'}]}, []),
     ("foo==1.2\nbar==2.0", {'requirements': [
         {'requirement': 'foo>=1.0', 'reason': 'upgrade'},
-        {'requirement': 'bar<2.0', 'reason': 'downgrade'}]}, [('bar==2.0', 'downgrade')]),
+        {'requirement': 'bar<2.0', 'reason': 'downgrade'}]}, [('bar==2.0', 'downgrade', 'error')]),
     ("foo==1.2", {'requirements': []}, []),
     ("foo==1.2", {'requirements': [{'requirement': 'bar>=1.0', 'reason': 'upgrade'}]}, []),
+    ("foo==1.2", {'requirements': [{'requirement': 'foo<1.0', 'reason': 'upgrade', 'severity': 'warn'}]}, [('foo==1.2', 'upgrade', 'warn')]),
 ])
 def test_pip_freeze__load_requirements(freeze, reqs, expected_deprecated):
     from defrost import PipFreeze
     pip_freeze = PipFreeze(freeze)
     pip_freeze.load_requirements(reqs)
     assert len(pip_freeze.deprecated) == len(expected_deprecated)
-    for package, (pin, reason) in zip(pip_freeze.deprecated, expected_deprecated):
+    for package, (pin, reason, severity) in zip(pip_freeze.deprecated, expected_deprecated):
         assert package.deprecated is True
         assert str(package) == pin
         assert package.deprecation_reason == reason
+        assert package.deprecation_severity == severity

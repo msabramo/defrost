@@ -4,6 +4,11 @@ Unreleased
 * remove attributes ``Package.raw`` and ``Requirement.raw``, instead use
   ``Package.__str__()`` and ``Requirement.__str__()``.
 * ignore links found in pip freeze output (-f or -e lines)
+* Introduce the notion of deprecation severity. ``Package.deprecate()`` now
+  takes a severity kwarg which defaults to ``"error"`` and a requirement entry
+  in the YAML file now accepts an optional ``severity`` which can be set to
+  ``error`` or ``warn``. This affects the exit status code for the command line
+  interface.
 
 0.1.0
 =====
