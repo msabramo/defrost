@@ -42,6 +42,13 @@ Defrost can also take the pip freeze output as stdin by passing a dash sign
     $ pip freeze | defrost requirements.yml -
     Package(foobar==1.2) does not satisfy Requirement(foobar>=2.0): foobar pre-1.0 is no longer supported, please upgrade to 1.x
 
+You can also check whether the YAML file provided is valid with
+``defrost-lint``.
+
+.. code-block::
+
+    $ defrost-lint requirements.yml
+
 Install
 -------
 
