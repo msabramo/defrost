@@ -10,6 +10,14 @@ exit_codes = {
 }
 
 
+def _parse_yaml(requirement_file):
+    try:
+        return yaml.load(requirement_file)
+    except yaml.YAMLError as err:
+        click.echo("YAMLError: {}".format(err), err=True)
+        sys.exit(1)
+
+
 @click.command()
 @click.option(
     '-x', '--exit-mode', default='normal',
@@ -20,7 +28,14 @@ soft: always return exit code 0; normal (default): return exit code 1 on \
 @click.argument('requirement_file', type=click.File())
 @click.argument('pip_freeze_file', type=click.File())
 def defrost(exit_mode, requirement_file, pip_freeze_file):
-    reqs = yaml.load(requirement_file)
+    """
+    Check if the output of pip freeze satisfies the YAML requirement file. The
+    pip freeze output may be passed as stdin:
+
+        pip freeze | defrost reqs.yml -
+
+    """
+    reqs = _parse_yaml(requirement_file)
     pip_freeze = PipFreeze(pip_freeze_file.read())
     pip_freeze.load_requirements(reqs)
 
@@ -36,3 +51,20 @@ def defrost(exit_mode, requirement_file, pip_freeze_file):
             exit_code = exit_codes[package.deprecation_severity][exit_mode]
 
     sys.exit(exit_code)
+
+
+@click.command()
+@click.argument('requirement_file', type=click.File())
+def lint(requirement_file):
+    """
+    Validate a YAML requirement file.
+    """
+    from defrost.validation import validate
+    reqs = _parse_yaml(requirement_file)
+
+    try:
+        validate(reqs)
+        sys.exit(0)
+    except Exception as err:
+        click.echo(err, err=True)
+        sys.exit(1)

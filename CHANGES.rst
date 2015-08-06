@@ -1,3 +1,8 @@
+Unreleased
+==========
+
+* introduce ``defrost-lint`` command to test the validity of requirement files.
+
 0.2.0
 =====
 
