@@ -75,3 +75,18 @@ def test_defrost__exit_mode_hard(exit_mode_option, yaml, pipfreeze, exit_code):
         defrost, [exit_mode_option, 'hard', yaml, pipfreeze], catch_exceptions=False
     )
     assert result.exit_code == exit_code
+
+
+@pytest.mark.parametrize("yaml, exit_code", [
+    ('tests/reqs.yml', 0),
+    ('tests/reqs_invalid_data.yml', 1),
+    ('tests/reqs_unparsable.yml', 1),
+])
+def test_defrost_lint(yaml, exit_code):
+    from defrost.cli import lint
+
+    runner = CliRunner()
+    result = runner.invoke(
+        lint, [yaml], catch_exceptions=False
+    )
+    assert result.exit_code == exit_code

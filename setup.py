@@ -11,8 +11,9 @@ README = read('README.rst')
 CHANGES = read('CHANGES.rst')
 
 requires = [
-    'click>=4.0',
     'PyYAML',
+    'click>=4.0',
+    'jsonschema',
 ]
 
 setup(
@@ -46,7 +47,8 @@ setup(
     ],
     entry_points={
         'console_scripts': [
-            'defrost=defrost.cli:defrost'
+            'defrost=defrost.cli:defrost',
+            'defrost-lint=defrost.cli:lint',
         ],
     },
 )

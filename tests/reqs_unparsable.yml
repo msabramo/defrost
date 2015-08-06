@@ -1,0 +1,4 @@
+---
+requirements:
+- requirement: foo>=1.0
+    severity: indentation contains a TAB
