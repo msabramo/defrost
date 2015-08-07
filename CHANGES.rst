@@ -1,5 +1,5 @@
-Unreleased
-==========
+0.3.1
+=====
 
 * gracefully handle comments that may be present in pip freeze output
 
