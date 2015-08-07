@@ -1,3 +1,8 @@
+Unreleased
+==========
+
+* gracefully handle comments that may be present in pip freeze output
+
 0.3.0
 =====
 

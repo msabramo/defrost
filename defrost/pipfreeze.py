@@ -11,7 +11,7 @@ def _parse_pip_freeze(pip_freeze_output):
     pip_freeze_output = io.StringIO(pip_freeze_output)
 
     for req in pip_freeze_output.readlines():
-        if req.startswith('-'):
+        if req.startswith(('-e ', '-f ', '#')):
             continue
         yield Package(req)
 
