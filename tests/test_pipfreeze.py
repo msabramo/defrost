@@ -16,13 +16,14 @@ def test_pip_freeze__bool(freeze, expected):
 
 @pytest.mark.parametrize("freeze, expected", [
     ("", []),
-    ("foobar==1.2.3", ["foobar==1.2.3"]),
-    ("foo==1.2.3\nbar==2.0", ["foo==1.2.3", "bar==2.0"]),
+    ("foobar==1.2.3", [Package("foobar==1.2.3")]),
+    ("foo==1.2.3\nbar==2.0", [Package("foo==1.2.3"), Package("bar==2.0")]),
+    ("-f /opt/pip/wheels\n-e git+git@github.com:SurveyMonkey/defrost.git\nfoo==1.2.3\n## !! Could not determine repository location\nbar==2.0", [Package("foo==1.2.3"), Package("bar==2.0")]),
 ])
 def test_pip_freeze__iter(freeze, expected):
-    from defrost import PipFreeze, Package
+    from defrost import PipFreeze
     pip_freeze = PipFreeze(freeze)
-    assert list(pip_freeze) == [Package(req) for req in expected]
+    assert list(pip_freeze) == expected
 
 
 @pytest.mark.parametrize("freeze, expected", [
